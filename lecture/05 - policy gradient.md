@@ -7,8 +7,8 @@ The model free RL assume that we can interact with the real world which effectiv
 The objective of RL is:
 
 <p align="center">
-  <img src="asset/05/trajectory.png" alt="Trajectory" width="320" style="vertical-align:middle;"/>
-  <img src="asset/05/objective.png" alt="RL Objective" width="320" style="vertical-align:middle;"/>
+  <img src="asset/05/trajectory.png" alt="Trajectory" width="400" style="vertical-align:middle;"/>
+  <img src="asset/05/objective.png" alt="RL Objective" width="400" style="vertical-align:middle;"/>
 </p>
 
 The objective is an expectation under the trajectory distributed according to $p_\theta(\tau)$
@@ -32,7 +32,7 @@ $$\sum_t \mathbb{E}_{\tau \sim p_\theta(\tau)}[r(s_t, a_t)] = \sum_t \mathbb{E}_
 For the infinite horizon case with stationary distribution, the objective becomes:
 
 <p align="center">
-  <img src="asset/05/infinite_horizon.png" alt="Infinite Horizon Case" style="vertical-align:middle;"/>
+  <img src="asset/05/infinite_horizon.png" alt="Infinite Horizon Case" width="800" style="vertical-align:middle;"/>
 </p>
 
 If $T = \infty$ (*i.e.*, the episode never terminates — a continuing task), the undiscounted objective may be ill-defined when rewards are always positive (that is, the objective can diverge to infinity).
@@ -47,7 +47,7 @@ By using value functions, the finite horizon policy gradients can be extended to
 # 2. Evaluating the objective
 
 <p align="center">
-  <img src="asset/05/evaluate_objective.png" alt="Evaluating the objective" style="vertical-align:middle;"/>
+  <img src="asset/05/evaluate_objective.png" alt="Evaluating the objective" width="800" style="vertical-align:middle;"/>
 </p>
 
 Since the transition probability is unknown, we evaluate the objective by sampling $N$ trajectories under the policy in the real world. This sampling procedure yields an unbiased estimate of the objective $J(\theta)$, since the sample mean of the returns converges to the true expectation by the law of large numbers.
@@ -55,7 +55,8 @@ Since the transition probability is unknown, we evaluate the objective by sampli
 # 3. Direct policy differentiation
 
 <p align="center">
-  <img src="asset/05/policy_differentiation1.png" alt="Direct policy differentiation" style="vertical-align:middle;"/>
+  <img src="asset/05/policy_differentiation1.png" alt="Direct policy differentiation"
+  width="800" style="vertical-align:middle;"/>
 </p>
 
 Differentiation operator is linear.
@@ -63,13 +64,13 @@ So, we can push it inside the integral.
 In this way, we differentiate the objective value using only smaples like evaluation.
 
 <p align="center">
-  <img src="asset/05/policy_differentiation2.png" alt="Direct policy differentiation" style="vertical-align:middle;"/>
+  <img src="asset/05/policy_differentiation2.png" alt="Direct policy differentiation" width="800" style="vertical-align:middle;"/>
 </p>
 
 # 4. Evaluation the policy gradient
 
 <p align="center">
-  <img src="asset/05/evaluate_policy_gradient.png" alt="Evaluate the policy gradient" style="vertical-align:middle;"/>
+  <img src="asset/05/evaluate_policy_gradient.png" alt="Evaluate the policy gradient" width="800" style="vertical-align:middle;"/>
 </p>
 
 Using the same procedure as for evaluating the objective, we can estimate the policy gradient by executing the policy and computing sample gradients from the resulting trajectories. Then we improve the policy by taking a step of gradient ascent.
@@ -87,7 +88,7 @@ Using the same procedure as for evaluating the objective, we can estimate the po
 # 5. Understanding Policy Gradients
 
 <p align="center">
-  <img src="asset/05/comparison_to_maximum_likelihood.png" alt="Comparison to maximum likelihood" style="vertical-align:middle;"/>
+  <img src="asset/05/comparison_to_maximum_likelihood.png" alt="Comparison to maximum likelihood" width="800" style="vertical-align:middle;"/>
 </p>
 
 Maximum likelihood assumes the actions $a_{i, t}$ in the training data are good.
@@ -98,7 +99,7 @@ In policy gradient, the actions $a_{i,t}$ were sampled from the (possibly subopt
 # 6. Partial observability
 
 <p align="center">
-  <img src="asset/05/partial_observability.png" alt="Partial observability" style="vertical-align:middle;"/>
+  <img src="asset/05/partial_observability.png" alt="Partial observability" width="800" style="vertical-align:middle;"/>
 </p>
 
 The main difference between a state and an observation is whether it satisfies the Markov property. A state satisfies the Markov property, whereas an observation generally does not.
@@ -107,7 +108,7 @@ Even in partially observable settings, the policy gradient equation remains vali
 # 7. Limitation of the policy gradient: high variance
 
 <p align="center">
-  <img src="asset/05/high_variance.jpg" alt="High Variance" style="vertical-align:middle;"/>
+  <img src="asset/05/high_variance.jpg" alt="High Variance" width="800" style="vertical-align:middle;"/>
 </p>
 
 Suppose we have three sampled trajectories. The height of each green bar represents that trajectory's reward, and the blue curve shows the probability of each trajectory under the policy.
@@ -123,40 +124,39 @@ Thus, adding constants to rewards makes no difference.
 # 8. Reducing variance of policy gradient: causality
 
 <p align="center">
-  <img src="asset/05/causality.png" alt="Causality Property" style="vertical-align:middle;"/>
+  <img src="asset/05/causality.png" alt="Causality Property" width="800" style="vertical-align:middle;"/>
 </p>
 
 Causality property, which is always true, means that current action cannot affect past rewards.
 Therefore, if we generate enough samples past rewards cancel out to zero when averaged.
 
 $$
-\begin{align*}
-\mathbb{E}\!\left[\nabla_\theta \log \pi_\theta(a_t \mid s_t)\; r_{t'}\right]
-&= \mathbb{E}_{s_t \sim p(\tau)}\!\left[
-    \mathbb{E}_{(a_t, r_{t'}) \sim p(\tau)}\!\left[
+\begin{aligned}
+\mathbb{E}\left[\nabla_\theta \log \pi_\theta(a_t \mid s_t)\; r_{t'}\right]
+&= \mathbb{E}_{s_t \sim p(\tau)}\left[
+    \mathbb{E}_{(a_t, r_{t'}) \sim p(\tau)}\left[
         \nabla_\theta \log \pi_\theta(a_t \mid s_t)\; r_{t'} \,\mid\, s_t
-    \right]\right] \\[6pt]
-&= \mathbb{E}\!\left[
-    \mathbb{E}[r_{t'} \mid s_t] \cdot
+    \right]\right] \\\\[6pt]
+&= \mathbb{E}\left[
+    \mathbb{E}[r_{t'} \mid s_t]\,
     \mathbb{E}[\nabla_\theta \log \pi_\theta(a_t \mid s_t)\mid s_t]
-\right] \quad \because \text{conditional independence (causality)} \\[6pt]
-&= \mathbb{E}\!\left[
-    \mathbb{E}[r_{t'}] \cdot
+\right] \\\\[6pt]
+&= \mathbb{E}\left[
+    \mathbb{E}[r_{t'}]\,
     \mathbb{E}[\nabla_\theta \log \pi_\theta(a_t \mid s_t)\mid s_t]
-\right]\\[6pt]
+\right] \\\\[6pt]
 \mathbb{E}[\nabla_\theta \log \pi_\theta(a_t \mid s_t)\mid s_t]
-&= \sum_{a} \pi_\theta(a \mid s_t)\,\nabla_\theta \log \pi_\theta(a \mid s_t) \\[6pt]
+&= \sum_{a} \pi_\theta(a \mid s_t)\,\nabla_\theta \log \pi_\theta(a \mid s_t) \\\\[6pt]
 &= \sum_{a} \pi_\theta(a \mid s_t)\,
-    \frac{\nabla_\theta \pi_\theta(a \mid s_t)}{\pi_\theta(a \mid s_t)}
-    \quad \because \nabla \log f = \frac{\nabla f}{f} \\[6pt]
-&= \sum_{a} \nabla_\theta \pi_\theta(a \mid s_t) \\[6pt]
-&= \nabla_\theta \sum_{a} \pi_\theta(a \mid s_t) \quad \because \text{linearity of differentitation} \\[6pt]
-&= \nabla_\theta 1 \\[6pt]
-&= 0 \\[6pt]
+    \frac{\nabla_\theta \pi_\theta(a \mid s_t)}{\pi_\theta(a \mid s_t)} \\\\[6pt]
+&= \sum_{a} \nabla_\theta \pi_\theta(a \mid s_t) \\\\[6pt]
+&= \nabla_\theta \sum_{a} \pi_\theta(a \mid s_t) \\\\[6pt]
+&= \nabla_\theta 1 \\\\[6pt]
+&= 0 \\\\[6pt]
 \therefore\quad
-\mathbb{E}\!\left[\nabla_\theta \log \pi_\theta(a_t \mid s_t)\; r_{t'}\right] &= 0
-\quad \text{for } t' < t.
-\end{align*}
+\mathbb{E}\left[\nabla_\theta \log \pi_\theta(a_t \mid s_t)\; r_{t'}\right] &= 0
+\quad (t' < t).
+\end{aligned}
 $$
 
 The variance is reduced since some terms are removed from from the summation.
@@ -179,14 +179,14 @@ $$
 A baseline ($b$) is a reference value used to reduce variance, while keeping policy gradient estimator unbiased.
 
 <p align="center">
-  <img src="asset/05/baseline_unbiased.png" alt="Baseline" style="vertical-align:middle;"/> 
+  <img src="asset/05/baseline_unbiased.png" alt="Baseline" width="800" style="vertical-align:middle;"/> 
 </p>
 
 The average reward is not the best baseline, but in many cases it is used as a quick approximation. 
 An optimal baseline can be derived as follows:
 
 <p align="center">
-  <img src="asset/05/baseline_optimal.png" alt="Baseline" style="vertical-align:middle;"/> 
+  <img src="asset/05/baseline_optimal.png" alt="Baseline" width="800" style="vertical-align:middle;"/> 
 </p>
 
 The optimal baseline is not used very much in practical policy gradient algorithm because the optimal baseline differs for each trainable parameter.
@@ -212,7 +212,7 @@ However, this is not the case for log probability reweighting.
 
 # 11. A first-order approximation for IS (preview)
 <p align="center">
-  <img src="asset/05/first_order_approximation_IS.png" alt="Importance Sampling" style="vertical-align:middle;"/> 
+  <img src="asset/05/first_order_approximation_IS.png" width="800" alt="Importance Sampling" style="vertical-align:middle;"/> 
 </p>
 
 One issue is that the log probability reweighting term is expoential in trajectory length $T$.
@@ -232,7 +232,7 @@ Ignoring the state marginals is similar to the top of the slide, where all impor
 
 # 12. Implementing policy gradients
 <p align="center">
-  <img src="asset/05/implementing_policy_gradient.png" alt="Importance Sampling" style="vertical-align:middle;"/> 
+  <img src="asset/05/implementing_policy_gradient.png" width="800" alt="Importance Sampling" style="vertical-align:middle;"/> 
 </p>
 
 Naively, one could compute the gradient of $\text{log}\ \pi_\theta$ for every state–action pair across all parameters, but this approach is highly inefficient.
@@ -247,7 +247,7 @@ In continuous action spaces in particular, numerical issues arise: poor conditio
 * Poor conditioning can be solved by using pre-conditioner.
 
 <p align="center">
-  <img src="asset/05/continuous_space.png" alt="Continuous Space" style="vertical-align:middle;"/> 
+  <img src="asset/05/continuous_space.png" alt="Continuous Space" width="800" style="vertical-align:middle;"/> 
 </p>
 
 * The goal is to drive the state to zero (denoted by ★).
@@ -264,7 +264,7 @@ When we re-normalize the gradient, the $\sigma$-component dominates and the upda
 # 14. Covariant/natural policy gradient.
 
 <p align="center">
-  <img src="asset/05/natural_policy_gradient.png" alt="Natural policy gradient" style="vertical-align:middle;"/> 
+  <img src="asset/05/natural_policy_gradient.png" width="800" alt="Natural policy gradient" style="vertical-align:middle;"/> 
 </p>
 
 Picking a single step size that works for $k, \sigma$ is very hard because of poor conditioning.
@@ -277,7 +277,7 @@ If the parameter space is constrained, we have the same problem: poor conditioni
 To fix this, we can change the constraint to be in terms of the KL divergence between the old and new policy.
 
 <p align="center">
-  <img src="asset/05/natural_policy_gradient2.png" alt="Natural policy gradient" style="vertical-align:middle;"/> 
+  <img src="asset/05/natural_policy_gradient2.png" width="800" alt="Natural policy gradient" style="vertical-align:middle;"/> 
 </p>
 
 * The term parameterization-independent divergence measure denotes a divergence that is invariant under changes of coordinate system or parameterization.
@@ -288,7 +288,7 @@ If we take the second-order Taylor expansion of the KL divergence around $\pi_{\
 * The Fisher Information Matrix shows how much information the data contains about distribution parameters. For a parameter vector $\theta$, it is the covariance matrix of the score function (the gradient of the log-likelihood).
 
 <p align="center">
-  <img src="asset/05/natural_policy_gradient3.png" alt="Natural policy gradient" style="vertical-align:middle;"/> 
+  <img src="asset/05/natural_policy_gradient3.png" width="800" alt="Natural policy gradient" style="vertical-align:middle;"/> 
 </p>
 
 * $(\theta^\prime - \theta)^TF(\theta^\prime - \theta) = ||\theta^\prime - \theta||^2_F$
