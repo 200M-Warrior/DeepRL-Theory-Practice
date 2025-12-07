@@ -94,7 +94,7 @@ Option 2 can be interpreted as penalizing decisions according to the time step, 
 As a result, the gradient is discounted at every time step by $\gamma^{t-1}$ making earlier decisions more important than later ones, since later decisions cannot influence earlier rewards.
 
 <p align="center">
-  <img src="asset/06/cyclic_continuous_rl_task.gif" alt="Cyclic continuous RL task: running" width="800" style="vertical-align:middle;"/>
+  <img src="asset/06/cyclic_continuous_rl_task.gif" alt="Cyclic continuous RL task: running" width="400" style="vertical-align:middle;"/>
 </p>
 
 Option 2 is right thing to do in discounted problem factor but, in reality, option 1 is usually used.
