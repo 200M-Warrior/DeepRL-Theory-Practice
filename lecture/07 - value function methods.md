@@ -167,19 +167,20 @@ $$
 $$
 * $\mathcal{T}$는 transition probabilites matrix로, infinity norm에서 축소성을 가진다.
 
-> $$
-> \begin{aligned}
-> \|V\|_\infty &= \lim_{p \to \infty}\big(\sum_{i=1}^n|V(s_i)|^p\big)^{1/p} \\
-> &= \lim_{p \to \infty}\big(\sum_{i=1}^n\big(|V(s_i)|\big)^p\big)^{1/p} \times \frac{\text{max}_s|V(s)|^p)^{1/p}}{\text{max}_s|V(s)|^p)^{1/p}} \\
-> &= \lim_{p \to \infty}\bigg(\sum_{i=1}^n\bigg(\frac{|V(s_i)|}{\text{max}_s|V(s)|}\bigg)^p\bigg)^{1/p} \times (\text{max}_s|V(s)|^p)^{1/p} \\
-> &= \lim_{p \to \infty}(0+0+ \cdots + 1)^{1/p} \times \max_s |V(s)| \\
-> &= \max_s |V(s)|
-> \end{aligned}
-> $$
-> P-norm은 $\|V\|_p = (\sum_{i=1}^n|V(s_i)|^p)^{1/p}$로, infinity-norm은 $\|V\|_\infty = \max_s |V(s)|$이다.
+$$
+\begin{aligned}
+\|V\|_\infty &= \lim_{p \to \infty}\big(\sum_{i=1}^n|V(s_i)|^p\big)^{1/p} \\
+&= \lim_{p \to \infty}\big(\sum_{i=1}^n\big(|V(s_i)|\big)^p\big)^{1/p} \times \frac{\text{max}_s|V(s)|^p)^{1/p}}{\text{max}_s|V(s)|^p)^{1/p}} \\
+&= \lim_{p \to \infty}\bigg(\sum_{i=1}^n\bigg(\frac{|V(s_i)|}{\text{max}_s|V(s)|}\bigg)^p\bigg)^{1/p} \times (\text{max}_s|V(s)|^p)^{1/p} \\
+&= \lim_{p \to \infty}(0+0+ \cdots + 1)^{1/p} \times \max_s |V(s)| \\
+&= \max_s |V(s)|
+\end{aligned}
+$$
+* P-norm은 $\|V\|_p = (\sum_{i=1}^n|V(s_i)|^p)^{1/p}$로, infinity-norm은 $\|V\|_\infty = \max_s |V(s)|$이다.
 
 Bellman operator $\mathcal{B}$는 $\gamma$-contraction이다 ($0 < \gamma < 1$).
-Banach fixed point theorem에 의해 contraction mapping은 항상 unique한 fixed point $V^*$가 존재하며, 임의의 $V_0$에서 시작해도 $V_{k+1} = \mathcal{B}V_k$를 반복하면 $V^*$로 수렴한다.
+Banach fixed point theorem에 의해 contraction mapping은 항상 unique한 fixed point $V^*$가 존재한다.
+* 임의의 $V_0$에서 시작해도 $V_{k+1} = \mathcal{B}V_k$를 반복하면 $V^*$로 수렴한다.
 
 # 7. Non-tabular Value Function Learning
 
