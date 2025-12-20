@@ -195,8 +195,9 @@ Overestimation 문제를 해결하는 한 가지 방법은 Double Q-learning이�
   <img src="asset/08/q_learning_double_q_learning.jpg" alt="Double Q-learning" width="800" style="vertical-align:middle;"/>
 </p>
 
-$\max_{a'} Q_{\phi'}(s', a') = Q_{\phi'}(s', \text{argmax}_{a'} Q_{\phi'}(s', a'))$와 같다.
-문제는 $Q_{\phi'}$에 따라 action을 선택하는 것인데, 약간의 노이즈 때문에 어떤 action이 조금 더 낫다고 잘못 생각하여 그것을 선택하게 된다.
+$$\max_{a^\prime} Q_{\phi^\prime}(s^\prime, a^\prime) = Q_{\phi^\prime}(s^\prime, \text{argmax}_{a^\prime} Q_{\phi^\prime}(s^\prime, a^\prime))$$
+
+문제는 $Q_{\phi^\prime}$에 따라 action을 선택하는 것인데, 약간의 노이즈 때문에 어떤 action이 조금 더 낫다고 잘못 생각하여 그것을 선택하게 된다.
 이를 해결하는 방법은 action 선택의 노이즈를 value evaluation의 노이즈와 decorrelate시키는 것이다.
 
 이를 위한 한 가지 방법으로,  Double Q-learning에서는 argmax를 취할 때와 value를 평가할 때 서로 다른 parameter set을 사용한다.
