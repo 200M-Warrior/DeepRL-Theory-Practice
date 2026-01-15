@@ -6,4 +6,5 @@
 
 📂 Repository Structure
 - `lecture/` → Notes and summaries from CS285 lectures
+- `homework/` → Homework assignments from CS285 course
 - `practice/` → Hugging Face RL practice code implementations
