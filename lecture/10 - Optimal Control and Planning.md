@@ -61,7 +61,7 @@ Stochastic case에서는 actions가 주어지면 state sequence에 대한 분포
 Planning 문제이기 때문에 $p(a_t|s_t)$는 등장하지 않고 오로지 action sequence에만 dependent하다.
 따라서 action sequence를 조건으로 가지는 state sequence 분포 하에서 reward 기대값을 최대화해야 한다.
 주의할 점은 stochastic open-loop case에서 이런 종류의 plan은 어떤 state가 올지 모르는 상황에서 action을 선택하기 때문에 나쁜 결과를 가져올 수 있다.
-즉, 문제를 모르는 채 답을 정해야 하는 상황이므로 결과가 나쁠 수밖에 없다.
+즉, 문제를 모르는 채 답을 정해야 하는 상황이므로 결과가 나쁠 수밖에 없기 때문에 open-loop control은 sub-optimal 이다.
 만약 매 step마다 $s_{t+1}$를 관측할 수 있다면, 즉 closed-loop planning 문제에서는 훨씬 더 높은 reward를 얻을 수 있다.
 
 <p align="center">
