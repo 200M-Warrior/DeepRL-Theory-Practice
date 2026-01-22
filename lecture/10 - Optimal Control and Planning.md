@@ -36,7 +36,7 @@ Model이 주어졌을 때 의사결정을 내리는 알고리즘은 optimal cont
 * Planning: Discrete space에서 action sequence 선택하는 문제이다. Planning이 continuous 버전을 칭할 수도 있는데, 이 경우 planning과 trajectory optimization은 본질적으로 같다. 일반적으로 planning이라는 이름의 알고리즘들은 discrete branching 설정에서 branching/tree search 방식으로 여러 가능성을 고려한다.
 
 이번 강의에서는 dynamics가 주어졌다고 가정한다.
-* 이후에는 dynamics를 모를 때 이것을 학습하여 policy도 학습할 수 있는 방법에 대해 알아볼 것이다.
+* 이후에는 dynamics를 모를 때 이것을 학습(lecture 11)하여 policy도 학습(lecture 12)할 수 있는 방법에 대해 알아볼 것이다.
 
 <p align="center">
   <img src="asset/10/objective.jpg" alt="Objective" width="800" style="vertical-align:middle;"/>
