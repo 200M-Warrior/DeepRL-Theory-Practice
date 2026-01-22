@@ -33,7 +33,7 @@ Model-based라는 것은 POMDP(Partially Observable Markov Decision Process) gra
 Model이 주어졌을 때 의사결정을 내리는 알고리즘은 optimal control, trajectory optimization, planning 등으로 불린다.
 * Optimal Control: 가장 포괄적인 개념으로 reward 최적화/cost 최소화하는 control 선택하는 것이다. 모든 RL이 결국 optimal control 문제이다.
 * Trajectory Optimization: Continuous space에서 state-action sequence를 선택하는 문제로, 일반적으로 smooth gradient 기반 최적화를 수행한다. Optimal control에 접근하는 방법으로 볼 수 있다.
-* Planning: Discrete space에서 action sequence 선택하는 문제이다. Planning이 continuous 버전을 칭할 수도 있는데, 이 경우 planning과 trajectory optimization은 본질적으로 같다. 일반적으로 일반적으로 planning이라는 이름의 알고리즘들은 discrete branching 설정에서 branching/tree search 방식으로 여러 가능성을 고려한다.
+* Planning: Discrete space에서 action sequence 선택하는 문제이다. Planning이 continuous 버전을 칭할 수도 있는데, 이 경우 planning과 trajectory optimization은 본질적으로 같다. 일반적으로 planning이라는 이름의 알고리즘들은 discrete branching 설정에서 branching/tree search 방식으로 여러 가능성을 고려한다.
 
 이번 강의에서는 dynamics가 주어졌다고 가정한다.
 * 이후에는 dynamics를 모를 때 이것을 학습하여 policy도 학습할 수 있는 방법에 대해 알아볼 것이다.
