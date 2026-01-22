@@ -69,7 +69,7 @@ Model-based RL version 1.0은 잘 동작하지만, 실수를 했을 때 그것�
 
 데이터를 지속적으로 수집하면서 전체 model이 업데이트되면서 점진적으로 문제가 해결될 수 있지만, 실수가 발생했을 때 즉시 re-planning함으로써 더 빨리 문제를 해결할 수 있다.
 이를 model-based RL version 1.5라고 부를 것이다.
-Paper에서는 MCP(Model Predictive Control)이라고 부른다.
+Paper에서는 MPC(Model Predictive Control)이라고 부른다.
 * Dynamics model을 통해 planning한 것 중 첫 번째 action만 선택하고 다시 planning을 하기 때문에 computation cost가 늘어난다.
 * 하지만, 이를 통해 훨씬 더 나쁜 model로도 훨씬 더 잘할 수 있다.
 
