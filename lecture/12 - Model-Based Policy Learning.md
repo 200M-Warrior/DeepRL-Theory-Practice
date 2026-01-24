@@ -107,3 +107,137 @@ RNN에서의 해결책을 model-based에 적용할 수 있지 않을까라는 �
 하지만 학습된 dynamics model에 의해 생성된 추가 데이터를 활용한다.
 이는 역설적으로 보일 수 있지만, 매우 잘 작동한다.
 * 실제로는 model-free RL과 planning 중간인 어느 정도 hybrid 방법론으로 볼 수 있다.
+
+# 4. Model-Free Learning With a Model
+
+Policy gradient와 model-based RL을 수식적으로 비교로 이전에 언급한 model-based RL의 단점을 살펴보자.
+
+<p align="center">
+  <img src="asset/12/model_free_optim1.jpg" alt="Model-free optimization with Model" width="800" style="vertical-align:middle;"/>
+</p>
+
+Model-free RL에서 본 policy gradient은 likelihood ratio gradient estimator 또는 REINFORCE gradient estimate라고도 불린다.
+이는 policy parameter데 대한 reward의 gradient를 추정하는 gradient estimator로 생각할 수 있기 때문이다.
+중요한 것은 gradient estimator가 반드시 RL과 관련있을 필요는 없고, $p_\theta(\tau)$와 같이 stochastic computation graph가 있는 상황에서 일반적으로 사용될 수 있다.
+* 확률이 있으면 미분이 불가능 하지만, lecture 5에서 여러 trick을 사용해 미분을 하였다.
+
+즉, gradient estimator가 model-free만 아니라 model-based에서도 활용될 수 있음을 의미한다.
+또한, policy gradient에서는 샘플 생성하는데 transition pobability가 필요하지만, 미분을 할 땐 필요가 없다.
+* 샘플링을 통해 학습한다는 점이 고전적인 수치 최적화의 finite differencing과 원리가 유사하다.
+* 일반적인 backpropagation은 $f = ax + b$를 안 상태에서 $a, b$를 추정하는 것인데, model-free RL은 reward 관점에서 $f = ax + b$를 모르는 상태에서 오직 샘필링으로만 학습이 진행된다.
+
+Section 3에서 살펴 본 model-based RL을 수식으로 나타낸 것은 pathwise gradient라고 불린다.
+이는 복잡해 보이지만, 단순히 chain rule을 활용해 policy parameter $\theta$에 대한 gradient를 계산하는 것이다.
+주목할 점은 BPTT와 같이 Jacobian의 곱이 계속해서 반복되기 때문에 gradient exploding/vanishing이 발생할 수 있다는 것이다.
+
+위 수식에서 gradient estimator는 stochastic policy와 stochastic transition에만 유효하고, pathwise gradient는 deterministic policy와 transition에만 유효하다.
+이는 해결 가능한 문제이다.
+* Stochastic -> deterministic: 분산을 0으로 강제
+* Deterministic -> stochastic: reparameterization trick으로 해결
+
+이렇게만 보면 model-free RL이 좋아보이지만, model-free RL은 Jacobian 곱을 제거하지만,  샘플링이 필요하다.
+샘플이 충분하다면 Jacobian 곱을 제거할 수 있기 때문에 더 안정적으로 학습 가능하다.
+반면, model-based RL은 model을 시뮬레이션 할 computation이 필요하지만 실제로 물리적인 environment와 상호작용할 필요가 없다는 장점이 있다.
+
+결론적으로 model-free gradient로 policy를 학습하는 것이 더 나을 수 있다는 것이다.
+
+<p align="center">
+  <img src="asset/12/model_free_optim2.jpg" alt="Model-free optimization with Model" width="800" style="vertical-align:middle;"/>
+</p>
+
+Model-based RL에서 model-free 방법으로 policy를 학습하는 간다한 방법론을 version 2.5라고 부르자.
+Version 2.0과 차이점은 backpropagation을 사용하는 대신 policy gradient(step 3, 4)를 도입한 것이다.
+Policy gradient를 통해 policy 개선이 충분이 되었다면 dynamics model을 학습하는 step 2로 돌아가서 계속 반복된다.
+
+하지만 long model-based rollouts 저주라는 문제가 생긴다.
+학습된 dynamics model이 부정확하기 때문에 distributional shift가 발생하고 policy는 이전에 보지 못한 state에서 실수를 할 확률이 크다.
+검은색 곡선이 실제 dynamics로 $\pi_\theta$를 실행했을 때 trajectory이고 빨간색 곡선이 학습된 dynamics로 $\pi_\theta$를 실행했을 때 trajectory이다.
+Model-based rollout이 길다면 실수가 누적되기 때문에 두 trajectories의 차이가 커질 것이다.
+즉, 기대한 reward와 실제 얻은 reward의 차이가 커진다는 것을 의미한다.
+* 오차의 bound는 $O(\epsilon T^2)$이다.
+
+Horizon이 길수록 오차가 exponential하게 커지기 때문에 짧은 rollout만 사용하고 싶을 것이다.
+* Horizon은 task 자체의 전체 길이를 의미하고, rollout은 model을 사용해 시뮬레이션하는 길이를 의미한다.
+* 예를 들어, task의 horizon이 1000이고 rollout을 50step으로 제한한다면 훨씬 낮은 오차를 가질 것이다.
+
+하지만, 짧은 rollout만 사용하면 초기 time step에서 발생하는 state만 학습할 수 있고 나중 time step에서 일어나는 일은 보지 못할 것이다.
+30분 요리 중 초기 5분 길이의 model-based rollout만 만드는 것을 의미하는데, 이는 냄비를 불에 올리기에도 부족한 시간이다.
+
+따라서 horizon을 전부 고려하지만, 처음 time step에서 시작하는 것이 아니라 전체 horizon에 걸쳐 무작위 샘플링을 하고 각각으로부터 짧은 model-based rollout을 만들 것이다.
+Model-based roolout이 짧기 때문에 낮은 오차를 가지며 모든 time step을 볼 수 있지만, state distribution이 달라진다는 문제가 발생한다.
+* Old policy로 샘플링을 하여 시작 state $s_t$를 얻었지만, 학습된 dynamics model로 rollout하고 새로운 policy가 학습된다.
+그리고 새로운 policy로 data를 다시 샘플링하게 되므로 state의 distirubiton이 변하게 된다.
+  * State 분포가 old policy와 new policy가 혼합된 것이다.
+  * 시작 state $s_t$까지는 old policy state 분포를 다르고 그 이후 rollout은 new policy state 분포를 따른다.
+
+Policy gradient에서 처럼 trust region 하에 작은 변경만 준다면 안정적으로 학습이 진행될 것 이다.
+하지만, model-based RL의 목적은 적은 실제 data로 policy를 많이 개선하는 것이라 on-policy를 사용할 때 state distribution 불일치가 해를 끼치기 때문이다.
+따라서 일반적으로 Q-learning이나 Q-function actor-critic 방법과 같은 off-policy 알고리즘을 사용하는 것이 더 낫다.
+
+<p align="center">
+  <img src="asset/12/model_based_RL_3.0.jpg" alt="Model-free optimization with Model" width="800" style="vertical-align:middle;"/>
+</p>
+
+학습된 dynamics model로 짧은 rollout(데이터 증강)하여 model-free RL의 off-policy방법으로 policy를 개선하는 것을 model-based RL version 3.0이라고 부르자.
+이는 실제로 사람들이 실무에서 사용하는 방법론과 매우 유사하다.
+* State들로부터 짧은 rollout의 길이는 1 time step만큼 짧을 수 있고 더 길때는 10 time step 정도 이다.
+* 각 단계에서 섬세한 설계가 필요하다. (step 3,4를 얼마나 반복할지, step 2~5를 얼마나 반복할지 등)
+
+# 5. Dyna-Style Algorithms
+
+Model-based RL version 3.0을 기반으로 실용적으로 사용할 수 있는 방법론을 살펴보자.
+Step 4에서 사용할 off-policy 알고리즘은 기본적으로 Q-learning라고 가정한다.
+
+<p align="center">
+  <img src="asset/12/dyna1.jpg" alt="Dyna-Style Algorithms" width="800" style="vertical-align:middle;"/>
+</p>
+
+Dyna는 online Q learning을 위해 instance화된 method로 model-based accleration을 추가하였다.
+Dyna는 online 방법으로 제안되었기 때문에 1 step으로 dynamics model과 reward function을 학습한다.
+* 하나의 transiton을 input으로 받고 한 번의 gradient descent만 수행한다.
+
+그리고 classic Q learning을 업데이트할 때, 1 time step model-based rollout을 사용하고 이를 K번 반복한다.
+* Buffer에서 이전 state와 action을 샘플링하고 학습된 dynamics model로 시뮬레이션 한다.
+
+제안된 Dyna는 stochastic 시스템에 최적화되어 있고, dstributional shift에 취약할 것이라고 예상되는 경우 좋은 선택이다.
+* 1 step rollout, buffer에서 샘플링 등은 실제 data 분포에서 크게 벗어나지 않는다.
+
+<p align="center">
+  <img src="asset/12/dyna2.jpg" alt="Dyna-Style Algorithms" width="800" style="vertical-align:middle;"/>
+</p>
+
+Distributional shift에 안전한 것 대신 일반화된 version을 도출할 수 있고, 실무에서 사용되는 version에 더 가깝다.
+자세한 설계는 신중히 선택해야 한다.
+* Reward function을 모른다면 학습을 진행한다.
+* 1 step gradient 대신 여러 step gradient를 수행할 수 있다.
+* Model-based rollout에서 굳이 buffer에서 sampling하지 않고 최신 policy에 따라 action을 선택할 수 있고, random exploration할 수도 있다.
+* 1 step 대신 여러 step을 rollout할 수 있다.
+
+# 6. Model-accelerated Off-policy RL
+
+<p align="center">
+  <img src="asset/12/model_accelerated_off_policy_RL.jpg" alt="Model-accelerated Off-policy RL" width="800" style="vertical-align:middle;"/>
+</p>
+
+일반화된 Dyna를 그림으로 설명하면, 위와 같다.
+* Process 1, 2, 3은 Q-learning에서의 절차와 동일하다.
+* Process 4, 5는 model-based로 데이터를 증강한다.
+* 일반적으로 synthetic data가 많기 때문에 많이 사용되고 dynamics model이 업데이트 되면 model-based buffer에 있는 synthetic data를 제거한다. (물론, buffer data를 재사용할 수 있다.)
+
+<p align="center">
+  <img src="asset/12/model_accelerated_off_policy_RL2.jpg" alt="Model-accelerated Off-policy RL" width="800" style="vertical-align:middle;"/>
+</p>
+
+위의 diagram에서 구현 선택에 따라 제안된 다양한 algorithm이 존재한다.
+* MBPO: Q-learning process에서 사용되는 데이터 설계
+* MVE: model-based rollout으로 더 나은 target value 추정치를 얻지만 Q function 자체를 훈련시키는 데는 사용하지 않음
+
+각각의 설계 선택이 다르지만, 높은 수준에서 공통된 recipe를 가진다.
+* Rollout 데이터를 사용하면 실제 MDP에서 수집한 것보다 훨씬 더 많은 데이터를 사용할 수 있다는 장점이 있지만, dynamics model이 부정확하기 때문에 bias가 생긴다는 단점이 있다.
+  * Dynamics model ensemble을 사용하면 stochasticity가 오류를 평균화하고 exploitation을 줄이는 데 도움이 된다.
+* Section 4에서 언급했듯이 state distribution이 shift되어 실제 결과가 예상한 것과 다를 수 있다는 단점이 있지만, trade-off로 model-based acceleration을 사용하기 때문에 훨씬 빠르게 학습하는 경향이 있다.
+
+짧은 rollout을 사용하고 설계를 잘 하더라도 dynamics model의 정확성의 한계로 인해 bias가 추가되기 때문에 성능의 상한선이 있다는 것을 유의해야 한다.
+
+
+
